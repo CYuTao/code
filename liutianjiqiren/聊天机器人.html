@@ -1,0 +1,146 @@
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.mousewheel.js"></script>
+    <title>聊天机器人</title>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <span>小思同学</span>
+        <img src="img/person01.png" alt="icon" />
+
+      </div>
+<!-- 中间 聊天内容区域 -->
+      <div class="main">
+        <audio src="" style="display: none;" autoplay="autoplay" id="voice"></audio>
+        <ul class="talk_list">
+          <li class="left_word">
+            <img src="img/person01.png" /> <span>你好啊</span>
+
+          </li>
+        </ul>
+
+      </div>
+
+
+
+            <!-- 底部 消息编辑区域 -->
+            <div class="footer">
+              <img src="img/person02.png" alt="icon" />
+              <input type="text" placeholder="说的什么吧..." class="input_txt" />
+              <input type="button" value="发 送" class="input_sub" />
+            </div>
+          </div>
+     
+    </div>
+    <script type="text/javascript" src="js/scroll.js"></script>
+    <script>
+        // 为发送按钮绑定鼠标点击事件
+  $('.input_sub').on('click', function () {
+    // alert('123')
+    var text = $('.input_txt').val().trim()
+    if(text==='陈堉涛'){
+      $('.talk_list').append('<li class="right_word"><img src="img/person02.png" /> <span>' + $('.input_txt').val() + '</span></li>')
+      $('.talk_list').append(' <li class="left_word"><img src="img/person01.png" /> <span>他是你爸爸我知道的，亲</span></li>')
+      getVoice('他是你爸爸我知道的，亲')
+      $('.main').scrollTop( $('.main')[0].scrollHeight)
+      $('.input_txt').val('')
+      return
+
+    }
+    if(text==='陈志鹏'){
+      $('.talk_list').append('<li class="right_word"><img src="img/person02.png" /> <span>' + $('.input_txt').val() + '</span></li>')
+      $('.talk_list').append(' <li class="left_word"><img src="img/person01.png" /> <span>长得像歌手阿信的微笑阳光男孩，配偶：啊饼</span></li>')
+      getVoice('长得像歌手阿信的微笑阳光男孩，配偶：啊饼')
+      $('.main').scrollTop( $('.main')[0].scrollHeight)
+      $('.input_txt').val('')
+      return
+
+    }
+    if(text==='陈灿雄'){
+      $('.talk_list').append('<li class="right_word"><img src="img/person02.png" /> <span>' + $('.input_txt').val() + '</span></li>')
+      $('.talk_list').append(' <li class="left_word"><img src="img/person01.png" /> <span>顶尖运营，老尾帮老大</span></li>')
+      getVoice('顶尖运营，老尾帮老大')
+      $('.main').scrollTop( $('.main')[0].scrollHeight)
+      $('.input_txt').val('')
+      return
+
+    }
+    if(text.length<=0){
+      return $('.input_txt').val('')
+    }
+    $('.talk_list').append('<li class="right_word"><img src="img/person02.png" /> <span>' + $('.input_txt').val() + '</span></li>')
+    getMsg( $('.input_txt').val())
+    $('.input_txt').val('')
+    $('.main').scrollTop( $('.main')[0].scrollHeight)
+    // alert($('.talk_list')[0].scrollHeight)
+    
+
+
+
+  })
+
+    // 获取聊天机器人发送回来的消息
+    function getMsg(text) {
+    $.ajax({
+      method: 'GET',
+      url: 'http://www.liulongbin.top:3006/api/robot',
+      data: {
+        spoken: text
+      },
+      success: function (res) {
+        console.log(res)
+        if (res.message === 'success') {
+          // 接收聊天消息
+          var msg = res.data.info.text
+          $('.talk_list').append(' <li class="left_word"><img src="img/person01.png" /> <span>' + msg + '</span></li>')
+          // 重置滚动条的位置
+          // 调用 getVoice 函数，把文本转化为语音
+          getVoice(msg)
+          $('.main').scrollTop( $('.main')[0].scrollHeight)
+        }
+      }
+    })
+  }
+
+  // 把文字转化为语音进行播放
+  function getVoice(text) {
+    $.ajax({
+      method: 'GET',
+      url: 'http://www.liulongbin.top:3006/api/synthesize',
+      data: {
+        text: text
+      },
+      success: function (res) {
+        // console.log(res)
+        if (res.status === 200) {
+          // 播放语音
+          $('#voice').attr('src', res.voiceUrl)
+        }
+      }
+    })
+  }
+
+  $('.input_txt').on('keyup',function(e){
+    if (e.keyCode === 13) {
+      // alert('123')
+      // console.log('用户弹起了回车键')
+      $('.input_sub').click()
+    }
+
+  })
+
+      
+     
+    </script>
+  </body>
+</html>
